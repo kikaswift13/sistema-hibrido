@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Híbrido Empresarial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .glass {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        .table {
+            color: white;
+        }
+
+        .btn-custom {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+    <!-- HEADER -->
+    <div class="text-center mb-5">
+        <h1>☁️ Sistema Híbrido Empresarial</h1>
+        <p>Gestión de datos local + nube (Cloud Computing)</p>
+    </div>
+
+    <!-- CARDS -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card glass p-3 shadow">
+                <h5>💾 Base de Datos Local</h5>
+                <p>Procesamiento rápido y control interno de la empresa.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card glass p-3 shadow">
+                <h5>☁️ Nube</h5>
+                <p>Respaldo, acceso remoto y escalabilidad.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SELECTOR -->
+    <div class="card glass shadow p-3 mb-4">
+        <h5>📂 Seleccionar Tabla</h5>
+
+        <form method="GET" action="/">
+            <div class="row">
+                <div class="col-md-10">
+                    <select name="tabla" class="form-select">
+                        <option value="Products" {% if tabla == 'Products' %}selected{% endif %}>Productos</option>
+                        <option value="Customers" {% if tabla == 'Customers' %}selected{% endif %}>Clientes</option>
+                        <option value="Orders" {% if tabla == 'Orders' %}selected{% endif %}>Órdenes</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100 btn-custom">Cargar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- BUSCADOR -->
+<div class="card glass shadow p-3 mb-4">
+    <h5>🔎 Buscar en {{ tabla }}</h5>
+
+    <form method="GET" action="/">
+        <input type="hidden" name="tabla" value="{{ tabla }}">
+
+        <div class="row">
+            <div class="col-md-10">
+                <input type="text" name="busqueda" class="form-control"
+                       placeholder="Escribe para buscar...">
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-info w-100 btn-custom">Buscar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+    <!-- FORMULARIO DINÁMICO -->
+    <div class="card glass shadow p-4 mb-4">
+        <h4>➕ Gestión de {{ tabla }}</h4>
+
+<form action="/add" method="POST" class="row g-3">
+
+    <input type="hidden" name="tabla" value="{{ tabla }}">
+
+    {% for col in columnas %}
+        {% if 'id' not in col.lower() %}
+        <div class="col-md-4">
+            <input type="text" name="{{ col }}" class="form-control" placeholder="{{ col }}" required>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <div class="col-md-2">
+        <button class="btn btn-success w-100">Guardar</button>
+    </div>
+
+</form>
+    </div>
+
+    <!-- TABLA DINÁMICA -->
+    <div class="card glass shadow p-4">
+        <h4>📊 Gestión de {{ tabla }}</h4>
+
+        <table class="table table-hover mt-3">
+            <thead>
+                <tr>
+                    {% for col in columnas %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for fila in datos %}
+                <tr>
+                    {% for col in columnas %}
+                        <td>{{ fila[col] }}</td>
+                    {% endfor %}
+
+                    <td>
+                        <a href="/delete/{{ tabla }}/{{ fila[columnas[0]] }}"
+                           class="btn btn-danger btn-sm btn-custom"
+                           onclick="return confirm('¿Eliminar registro?')">
+                           Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
