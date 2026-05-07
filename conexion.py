@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, redirect
 import mysql.connector
+import os
 
 app = Flask(__name__)
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="1234",
-        database="sistema_hibrido"
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", "1234"),
+        database=os.getenv("DB_NAME", "sistema_hibrido"),
+        port=int(os.getenv("DB_PORT", 3306))
     )
 
 @app.route('/')
